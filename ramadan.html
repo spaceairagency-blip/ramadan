@@ -107,25 +107,25 @@ button{background:var(--accent);font-weight:bold;cursor:pointer}
 </div>
 
 <div class="footer">Offline • localStorage • ALL IN ONE</div>
-  <button onclick="sendNotification()">🔔 Send Notification</button>
+  <!-- <button onclick="sendNotification()">🔔 Send Notification</button> -->
 
 </div>
 
 <script>
-  // Notification permission
-if ("Notification" in window) {
-  Notification.requestPermission();
-}
+//   // Notification permission
+// if ("Notification" in window) {
+//   Notification.requestPermission();
+// }
 
-function sendNotification() {
-  if (Notification.permission === "granted") {
-    new Notification("🌙 Ramadan Reminder", {
-      body: "এটা manual notification 🤲",
-      icon: "https://cdn-icons-png.flaticon.com/512/2949/2949922.png"
-    });
-  } else {
-    alert("Notification permission allow করতে হবে");
-  }
+// function sendNotification() {
+//   if (Notification.permission === "granted") {
+//     new Notification("🌙 Ramadan Reminder", {
+//       body: "এটা manual notification 🤲",
+//       icon: "https://cdn-icons-png.flaticon.com/512/2949/2949922.png"
+//     });
+//   } else {
+//     alert("Notification permission allow করতে হবে");
+//   }
 }
 
 /* ---------- THEME ---------- */
