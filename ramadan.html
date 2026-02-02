@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ramadan Dashboard</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+
+<style>
+:root{
+--bg:#0f172a;
+--card:#1e293b;
+--box:#020617;
+--text:#ffffff;
+--accent:#22c55e;
+}
+.light{
+--bg:#f8fafc;
+--card:#e2e8f0;
+--box:#ffffff;
+--text:#020617;
+--accent:#16a34a;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:var(--bg);color:var(--text);padding:15px}
+.container{max-width:900px;margin:auto}
+h1{text-align:center;color:#facc15;margin-bottom:10px}
+.card{background:var(--card);padding:15px;border-radius:12px;margin-bottom:15px}
+.card h2{margin-bottom:8px;color:#38bdf8}
+.flex{display:flex;gap:10px;flex-wrap:wrap}
+.time{flex:1;background:var(--box);padding:15px;border-radius:10px;text-align:center}
+.time span{display:block;font-size:24px;color:var(--accent);margin-top:6px}
+input,select,button{
+width:100%;padding:10px;border:none;border-radius:8px;margin-top:6px
+}
+input,select{background:var(--box);color:var(--text)}
+button{background:var(--accent);font-weight:bold;cursor:pointer}
+ul li{background:var(--box);padding:8px;border-radius:6px;margin-top:5px}
+.count{text-align:center;font-size:20px;color:#f97316}
+.top{display:flex;gap:10px;margin-bottom:10px}
+.footer{text-align:center;opacity:.6;font-size:14px}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>🌙 Ramadan Dashboard</h1>
+
+<div class="top">
+<select id="district">
+<option>Dhaka</option>
+<option>Chittagong</option>
+<option>Rajshahi</option>
+<option>Khulna</option>
+<option>Sylhet</option>
+<option>Barisal</option>
+<option>Rangpur</option>
+<option>Mymensingh</option>
+</select>
+<button onclick="toggleTheme()">Theme</button>
+</div>
+
+<div class="card">
+<h2>⏰ Sehri & Iftar</h2>
+<div class="flex">
+<div class="time">সেহরি শেষ<span id="sehri">...</span></div>
+<div class="time">ইফতার<span id="iftar">...</span></div>
+</div>
+</div>
+
+<div class="card">
+<h2>📅 ইসলামিক তারিখ</h2>
+<p class="count" id="hijri">Loading...</p>
+</div>
+
+<div class="card">
+<h2>🍽️ আজ কী খেলাম</h2>
+<input id="foodInput" placeholder="খাবারের নাম লিখুন">
+<button onclick="addFood()">Add</button>
+<button onclick="clearFood()">Clear</button>
+<ul id="foodList"></ul>
+</div>
+
+<div class="card">
+<h2>📆 Ramadan Day</h2>
+<p class="count" id="ramadanDay"></p>
+</div>
+
+<div class="card">
+<h2>🎉 Eid Countdown</h2>
+<p class="count" id="eid"></p>
+</div>
+
+<div class="footer">
+Offline Friendly • LocalStorage Enabled • PWA Ready
+</div>
+
+</div>
+
+<script>
+// ---------- THEME ----------
+function toggleTheme(){
+document.body.classList.toggle("light");
+localStorage.setItem("theme",document.body.className);
+}
+document.body.className = localStorage.getItem("theme") || "";
+
+// ---------- SEHRI / IFTAR ----------
+function loadTime(){
+const city=district.value;
+fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Bangladesh&method=1`)
+.then(r=>r.json())
+.then(d=>{
+sehri.innerText=d.data.timings.Fajr;
+iftar.innerText=d.data.timings.Maghrib;
+});
+}
+district.onchange=loadTime;
+loadTime();
+
+// ---------- HIJRI DATE ----------
+fetch("https://api.aladhan.com/v1/gToH")
+.then(r=>r.json())
+.then(d=>{
+hijri.innerText=
+`আজ ${d.data.hijri.day} ${d.data.hijri.month.en} ${d.data.hijri.year} হিজরি`;
+});
+
+// ---------- FOOD (LOCALSTORAGE) ----------
+let foods=JSON.parse(localStorage.getItem("foods"))||[];
+function renderFood(){
+foodList.innerHTML="";
+foods.forEach(f=>{
+const li=document.createElement("li");
+li.innerText=f;
+foodList.appendChild(li);
+});
+localStorage.setItem("foods",JSON.stringify(foods));
+}
+renderFood();
+
+function addFood(){
+if(foodInput.value){
+foods.push(foodInput.value);
+foodInput.value="";
+renderFood();
+}
+}
+function clearFood(){
+foods=[];
+renderFood();
+}
+
+// ---------- RAMADAN DAY ----------
+const ramadanStart=new Date("2026-02-18");
+const today=new Date();
+const r=Math.floor((today-ramadanStart)/(1000*60*60*24))+1;
+ramadanDay.innerText=r>0?`আজ Ramadan-এর ${r} তম দিন`:"Ramadan শুরু হয়নি";
+
+// ---------- EID ----------
+const eidDate=new Date("2026-03-20");
+const e=Math.ceil((eidDate-today)/(1000*60*60*24));
+eid.innerText=e>0?`Eid আসতে বাকি ${e} দিন`:"🌙 Eid Mubarak!";
+
+// ---------- NOTIFICATION ----------
+if("Notification" in window){
+Notification.requestPermission();
+}
+setInterval(()=>{
+const now=new Date().toLocaleTimeString("en-GB",{hour:'2-digit',minute:'2-digit'});
+if(now===iftar.innerText){
+new Notification("🌙 Iftar Time","সময় হয়ে গেছে, দোয়া কবুল হোক 🤲");
+}
+},60000);
+</script>
+
+</body>
+</html>
