@@ -3,179 +3,206 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ramadan Dashboard</title>
-
-<!-- PWA -->
-<link rel="manifest" href="manifest.json">
-
+<title>🌙 Ramadan Dashboard</title>
 <style>
-:root{
---bg:#0f172a;
---card:#1e293b;
---box:#020617;
---text:#ffffff;
---accent:#22c55e;
-}
-.light{
---bg:#f8fafc;
---card:#e2e8f0;
---box:#ffffff;
---text:#020617;
---accent:#16a34a;
-}
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:var(--bg);color:var(--text);padding:15px}
-.container{max-width:900px;margin:auto}
-h1{text-align:center;color:#facc15;margin-bottom:10px}
-.card{background:var(--card);padding:15px;border-radius:12px;margin-bottom:15px}
-.card h2{margin-bottom:8px;color:#38bdf8}
-.flex{display:flex;gap:10px;flex-wrap:wrap}
-.time{flex:1;background:var(--box);padding:15px;border-radius:10px;text-align:center}
-.time span{display:block;font-size:24px;color:var(--accent);margin-top:6px}
-input,select,button{
-width:100%;padding:10px;border:none;border-radius:8px;margin-top:6px
-}
-input,select{background:var(--box);color:var(--text)}
-button{background:var(--accent);font-weight:bold;cursor:pointer}
-ul li{background:var(--box);padding:8px;border-radius:6px;margin-top:5px}
-.count{text-align:center;font-size:20px;color:#f97316}
-.top{display:flex;gap:10px;margin-bottom:10px}
-.footer{text-align:center;opacity:.6;font-size:14px}
+:root{--bg:#0f172a;--card:#1e293b;--box:#020617;--text:#fff;--accent:#22c55e;}
+.light{--bg:#f8fafc;--card:#e2e8f0;--box:#fff;--text:#020617;--accent:#16a34a;}
+body{margin:0;font-family:Arial;background:var(--bg);color:var(--text);padding:15px;font-size:16px;}
+.container{max-width:750px;margin:auto;}
+h1{text-align:center;color:#facc15;margin-bottom:15px;}
+.card{background:var(--card);padding:15px;border-radius:12px;margin-bottom:15px;}
+ul{list-style:none;padding-left:0;}
+li{background:var(--bg);padding:10px;border-radius:6px;margin-top:5px;display:flex;justify-content:space-between;align-items:center;}
+input[type=checkbox]{width:20px;height:20px;cursor:pointer;}
+button{background:var(--accent);color:#fff;padding:10px;border:none;border-radius:8px;cursor:pointer;margin-top:10px;width:100%;}
+h2{color:#38bdf8;margin-bottom:10px;}
+select,input{width:100%;padding:8px;margin-top:5px;border:none;border-radius:6px;background:var(--box);color:var(--text);}
+.time{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.time div{flex:1;background:var(--box);padding:10px;border-radius:8px;text-align:center;}
+.time div span{display:block;font-size:20px;color:var(--accent);}
+.count{text-align:center;font-size:18px;color:#f97316;margin-bottom:10px;}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+.calendar-grid div{background:var(--box);padding:10px;text-align:center;border-radius:6px;}
+.checked{background:#16a34a;color:#fff;}
 </style>
 </head>
-
 <body>
 <div class="container">
+<h1>🌙 Ramadan Dashboard</h1>
 
-<h1>2026 Ramadan Dashboard</h1>
-
-<div class="top">
-<select id="district">
-<option>Dhaka</option>
-<option>Chittagong</option>
-<option>Rajshahi</option>
-<option>Khulna</option>
-<option>Sylhet</option>
-<option>Barisal</option>
-<option>Rangpur</option>
-<option>Mymensingh</option>
-</select>
-<button onclick="toggleTheme()">Theme</button>
-</div>
-
+<!-- District -->
 <div class="card">
-<h2>⏰ Sehri & Iftar</h2>
-<div class="flex">
-<div class="time">সেহরি শেষ<span id="sehri">...</span></div>
-<div class="time">ইফতার<span id="iftar">...</span></div>
-</div>
+<h2>🏙️ District Select</h2>
+<select id="district">
+<option>Dhaka</option><option>Chittagong</option><option>Rajshahi</option><option>Khulna</option>
+<option>Sylhet</option><option>Barisal</option><option>Rangpur</option><option>Mymensingh</option>
+</select>
 </div>
 
+<!-- Sehri/Iftar -->
+<div class="time">
+<div>সেহরি<span id="sehri">...</span><br>Countdown: <span id="sehriCountdown">...</span></div>
+<div>ইফতার<span id="iftar">...</span></div>
+</div>
+
+<!-- Hijri Date -->
 <div class="card">
 <h2>📅 ইসলামিক তারিখ</h2>
-<p class="count" id="hijri">Loading...</p>
+<p id="hijri">Loading...</p>
 </div>
 
+<!-- Ramadan & Eid -->
+<div class="count" id="ramadanDay">Loading Ramadan Day...</div>
+<div class="count" id="eidCountdown">Loading Eid Countdown...</div>
+
+<!-- Ramadan Calendar -->
+<div class="card">
+<h2>📅 Ramadan Calendar</h2>
+<div class="calendar-grid" id="ramadanCalendar"></div>
+</div>
+
+<!-- Food Tracker -->
 <div class="card">
 <h2>🍽️ আজ কী খেলাম</h2>
 <input id="foodInput" placeholder="খাবারের নাম লিখুন">
 <button onclick="addFood()">Add</button>
-<button onclick="clearFood()">Clear</button>
+<button onclick="clearFood()">Clear All</button>
 <ul id="foodList"></ul>
 </div>
 
+<!-- Namaz Checklist -->
 <div class="card">
-<h2>📆 Ramadan Day</h2>
-<p class="count" id="ramadanDay"></p>
+<h2>🕌 Daily Namaz</h2>
+<ul id="namazList"></ul>
 </div>
 
+<!-- Extras -->
 <div class="card">
-<h2>🎉 Eid Countdown</h2>
-<p class="count" id="eid"></p>
+<h2>🎯 Extras</h2>
+<button onclick="showQuranVerse()">Random Quran Verse</button>
+<button onclick="dailyDua()">Daily Dua</button>
+<button onclick="iftarRecipe()">Quick Iftar Recipe</button>
+<button onclick="addCustomReminder()">Add Reminder</button>
+<button onclick="showReminder()">Show Reminder</button>
+<button onclick="toggleFontSize()">Toggle Font Size</button>
+<button onclick="toggleTheme()">Toggle Theme</button>
+<button onclick="islamicQuote()">Random Islamic Quote</button>
 </div>
-
-<div class="footer">
-Offline Friendly • LocalStorage Enabled • PWA Ready
-</div>
-
 </div>
 
 <script>
 // ---------- THEME ----------
-function toggleTheme(){
-document.body.classList.toggle("light");
-localStorage.setItem("theme",document.body.className);
-}
-document.body.className = localStorage.getItem("theme") || "";
+function toggleTheme(){document.body.classList.toggle("light");localStorage.setItem("theme",document.body.className);}
+document.body.className = localStorage.getItem("theme")||"";
 
 // ---------- SEHRI / IFTAR ----------
-function loadTime(){
-const city=district.value;
-fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Bangladesh&method=1`)
-.then(r=>r.json())
-.then(d=>{
-sehri.innerText=d.data.timings.Fajr;
-iftar.innerText=d.data.timings.Maghrib;
-});
+let sehriTime="", iftarTime="";
+async function loadTime(){
+const city=document.getElementById("district").value;
+const res=await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Bangladesh&method=1`);
+const data=await res.json();
+sehriTime=data.data.timings.Fajr;
+iftarTime=data.data.timings.Maghrib;
+document.getElementById("sehri").innerText=sehriTime;
+document.getElementById("iftar").innerText=iftarTime;
+startSehriCountdown();
 }
-district.onchange=loadTime;
+document.getElementById("district").onchange=loadTime;
 loadTime();
+
+// ---------- SEHRI COUNTDOWN ----------
+function startSehriCountdown(){
+function updateCountdown(){
+const now=new Date();
+const [h,m]=sehriTime.split(":").map(Number);
+const sehriDate=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m);
+let diff=sehriDate-now;
+if(diff<0) diff=0;
+const hours=Math.floor(diff/1000/60/60);
+const minutes=Math.floor((diff/1000/60)%60);
+const seconds=Math.floor((diff/1000)%60);
+document.getElementById("sehriCountdown").innerText=`${hours}h ${minutes}m ${seconds}s`;
+}
+updateCountdown();
+setInterval(updateCountdown,1000);
+}
+
+// ---------- IFTAR NOTIFICATION ----------
+if("Notification" in window) Notification.requestPermission();
+setInterval(()=>{
+const now=new Date();
+const [h,m]=iftarTime.split(":").map(Number);
+if(now.getHours()===h && now.getMinutes()===m){
+if(Notification.permission==="granted") new Notification("🌙 Iftar Time","সময় হয়ে গেছে, দোয়া কবুল হোক 🤲");
+}
+},60000);
 
 // ---------- HIJRI DATE ----------
 fetch("https://api.aladhan.com/v1/gToH")
 .then(r=>r.json())
-.then(d=>{
-hijri.innerText=
-`আজ ${d.data.hijri.day} ${d.data.hijri.month.en} ${d.data.hijri.year} হিজরি`;
-});
+.then(d=>document.getElementById("hijri").innerText=`আজ ${d.data.hijri.day} ${d.data.hijri.month.en} ${d.data.hijri.year} হিজরি`);
 
-// ---------- FOOD (LOCALSTORAGE) ----------
-let foods=JSON.parse(localStorage.getItem("foods"))||[];
-function renderFood(){
-foodList.innerHTML="";
-foods.forEach(f=>{
-const li=document.createElement("li");
-li.innerText=f;
-foodList.appendChild(li);
-});
-localStorage.setItem("foods",JSON.stringify(foods));
-}
-renderFood();
-
-function addFood(){
-if(foodInput.value){
-foods.push(foodInput.value);
-foodInput.value="";
-renderFood();
-}
-}
-function clearFood(){
-foods=[];
-renderFood();
-}
-
-// ---------- RAMADAN DAY ----------
+// ---------- RAMADAN DAY & EID ----------
 const ramadanStart=new Date("2026-02-18");
-const today=new Date();
-const r=Math.floor((today-ramadanStart)/(1000*60*60*24))+1;
-ramadanDay.innerText=r>0?`আজ Ramadan-এর ${r} তম দিন`:"Ramadan শুরু হয়নি";
-
-// ---------- EID ----------
 const eidDate=new Date("2026-03-20");
+function updateRamadanDay(){
+const today=new Date();
+const dayNum=Math.floor((today-ramadanStart)/(1000*60*60*24))+1;
+document.getElementById("ramadanDay").innerText=dayNum>0?`আজ Ramadan-এর ${dayNum} তম দিন`:"Ramadan শুরু হয়নি";
 const e=Math.ceil((eidDate-today)/(1000*60*60*24));
-eid.innerText=e>0?`Eid আসতে বাকি ${e} দিন`:"🌙 Eid Mubarak!";
+document.getElementById("eidCountdown").innerText=e>0?`Eid আসতে বাকি ${e} দিন`:"🌙 Eid Mubarak!";
+}
+updateRamadanDay(); setInterval(updateRamadanDay,3600000);
 
-// ---------- NOTIFICATION ----------
-if("Notification" in window){
-Notification.requestPermission();
+// ---------- RAMADAN CALENDAR ----------
+const ramadanDays=30;
+let ramadanChecklist=JSON.parse(localStorage.getItem("ramadanChecklist"))||[];
+function renderRamadanCalendar(){
+const calendar=document.getElementById("ramadanCalendar");
+calendar.innerHTML="";
+const today=new Date();
+for(let i=1;i<=ramadanDays;i++){
+const div=document.createElement("div");
+const checked=ramadanChecklist.includes(i)||i<=(Math.floor((today-ramadanStart)/(1000*60*60*24))+1);
+if(checked) div.classList.add("checked");
+div.innerHTML=`${i}`;
+calendar.appendChild(div);
+if(checked && !ramadanChecklist.includes(i)) ramadanChecklist.push(i);
 }
-setInterval(()=>{
-const now=new Date().toLocaleTimeString("en-GB",{hour:'2-digit',minute:'2-digit'});
-if(now===iftar.innerText){
-new Notification("🌙 Iftar Time","সময় হয়ে গেছে, দোয়া কবুল হোক 🤲");
+localStorage.setItem("ramadanChecklist",JSON.stringify(ramadanChecklist));
 }
-},60000);
+renderRamadanCalendar();
+
+// ---------- NAMAZ CHECKLIST ----------
+const namazTimes=["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+let namazChecklist=JSON.parse(localStorage.getItem("namazChecklist"))||[];
+function renderNamaz(){
+const ul=document.getElementById("namazList"); ul.innerHTML="";
+namazTimes.forEach(name=>{const li=document.createElement("li"); const checked=namazChecklist.includes(name)?"checked":""; li.innerHTML=`<span>${name}</span> <input type="checkbox" onchange="toggleNamaz('${name}',this)" ${checked}>`; ul.appendChild(li);});
+localStorage.setItem("namazChecklist",JSON.stringify(namazChecklist));
+}
+function toggleNamaz(name,checkbox){if(checkbox.checked){if(!namazChecklist.includes(name)) namazChecklist.push(name);}else{namazChecklist=namazChecklist.filter(n=>n!==name);}localStorage.setItem("namazChecklist",JSON.stringify(namazChecklist));}
+renderNamaz();
+
+// ---------- FOOD TRACKER ----------
+let foods=JSON.parse(localStorage.getItem("foods"))||[];
+function renderFood(){const ul=document.getElementById("foodList"); ul.innerHTML=""; foods.forEach(f=>{const li=document.createElement("li"); li.innerText=f; ul.appendChild(li);});localStorage.setItem("foods",JSON.stringify(foods));}
+function addFood(){const input=document.getElementById("foodInput"); if(input.value){foods.push(input.value);input.value="";renderFood();}}
+function clearFood(){foods=[]; localStorage.setItem("foods",JSON.stringify(foods)); renderFood();}
+renderFood();
+
+// ---------- CUSTOM REMINDER ----------
+function addCustomReminder(){const r=prompt("Reminder লিখুন"); if(r){localStorage.setItem("customReminder",r); alert("Reminder সেট হয়েছে!");}}
+function showReminder(){const r=localStorage.getItem("customReminder"); if(r) alert("Reminder: "+r); else alert("কোনো Reminder নেই!");}
+
+// ---------- FONT SIZE ----------
+function toggleFontSize(){document.body.style.fontSize=document.body.style.fontSize==="18px"?"16px":"18px";}
+
+// ---------- EXTRAS ----------
+function showQuranVerse(){const verses=["Indeed, Allah is with the patient. (2:153)","So remember Me; I will remember you. (2:152)","Allah does not burden a soul beyond that it can bear. (2:286)"]; alert(verses[Math.floor(Math.random()*verses.length)]);}
+function dailyDua(){const duas=["اللَّهُمَّ إِنِّي لَكَ صُمْتُ وَبِكَ آمَنْتُ","O Allah, accept my fasting and prayers."]; alert(duas[Math.floor(Math.random()*duas.length)]);}
+function iftarRecipe(){const recipes=["Fried Chicken","Fruit Chaat","Dates & Milk","Vegetable Pakora"]; alert("আজকের ইফতারের জন্য চেষ্টা করুন: "+recipes[Math.floor(Math.random()*recipes.length)]);}
+function islamicQuote(){const quotes=["Prayer is the key to Heaven.","Charity does not decrease wealth.","Patience is beautiful."]; alert(quotes[Math.floor(Math.random()*quotes.length)]);}
 </script>
-
 </body>
 </html>
