@@ -1,297 +1,133 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌙 Ramadan Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Islam | Topic</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+         *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
 
-<style>
-:root{
---bg:#0f172a;--card:#1e293b;--box:#020617;
---text:#fff;--accent:#22c55e;
-}
-.light{
---bg:#f8fafc;--card:#e2e8f0;--box:#fff;
---text:#020617;--accent:#16a34a;
-}
-*{box-sizing:border-box;font-family:Arial}
-body{margin:0;background:var(--bg);color:var(--text);padding:15px}
-.container{max-width:900px;margin:auto}
-h1{text-align:center;color:#facc15}
-.card{background:var(--card);padding:15px;border-radius:12px;margin:15px 0}
-h2{color:#38bdf8;margin-bottom:8px}
-.time{display:flex;gap:10px;flex-wrap:wrap}
-.time div{flex:1;background:var(--box);padding:12px;border-radius:10px;text-align:center}
-.time span{display:block;font-size:22px;color:var(--accent)}
-ul{list-style:none;padding:0}
-li{background:var(--box);padding:8px;border-radius:6px;margin-top:6px;
-display:flex;justify-content:space-between;align-items:center}
-input,select,button{
-width:100%;padding:10px;border:none;border-radius:8px;margin-top:6px
-}
-input,select{background:var(--box);color:var(--text)}
-button{background:var(--accent);font-weight:bold;cursor:pointer}
-.count{text-align:center;font-size:18px;color:#f97316}
-.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-.day{padding:10px;background:var(--box);border-radius:6px;text-align:center}
-.progress{background:#334155;border-radius:10px;height:12px}
-.progress div{height:12px;background:#22c55e;border-radius:10px;width:0%}
-.footer{text-align:center;opacity:.6;font-size:14px}
-</style>
+        body{
+            background: #0f172a;
+            color: #ffffff;
+        }
+
+        /* Header */
+        header{
+            background: linear-gradient(135deg, #06385f9b, #0a022c5b);
+            padding: 15px 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.414);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav{
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo{
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: #facc15;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px){
+            .logo{
+                font-size: 20px;
+            }
+        }
+        .cards{
+            display: grid;
+            margin: 50px;
+        }
+        .card{
+            height: 150px;
+            width: 150px;
+            background-color: #052543f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border-radius: 20px;
+            box-shadow: 0 0 0 10px rgba(0, 0, 0, .5);
+            margin: 50px;
+        }
+        .card span{
+            font-size: 50px;
+        }
+        .card a{
+            text-decoration: none;
+            color: white;
+        }
+        .fa-book-quran{
+            font-size: 50px;
+            margin: 10px;
+        }
+    </style>
 </head>
-
 <body>
-<div class="container">
-
-<h1>🌙 Ramadan Dashboard</h1>
-
-<div class="card">
-<select id="district">
-<option>Dhaka</option><option>Chittagong</option><option>Rajshahi</option>
-<option>Khulna</option><option>Sylhet</option><option>Barisal</option>
-<option>Rangpur</option><option>Mymensingh</option>
-</select>
-</div>
-
-<div class="time">
-<div>সেহরি<span id="sehri"></span>⏳ <span id="sehriCountdown"></span></div>
-<div>ইফতার<span id="iftar"></span></div>
-</div>
-
-<div class="card">
-<h2>📅 ইসলামিক তারিখ</h2>
-<p id="hijri"></p>
-</div>
-
-<div class="count" id="ramadanDay"></div>
-<div class="count" id="eid"></div>
-
-<div class="card">
-<h2>📆 Ramadan Calendar</h2>
-<div class="calendar" id="calendar"></div>
-</div>
-
-<div class="card">
-<h2>🍽️ আজ কী খেলাম</h2>
-<input id="foodInput" placeholder="খাবারের নাম">
-<button onclick="addFood()">Add</button>
-<button onclick="clearFood()">Clear All</button>
-<ul id="foodList"></ul>
-</div>
-
-<div class="card">
-<h2>🕌 আজকের নামাজ</h2>
-<ul id="namazList"></ul>
-
-<div style="margin-top:10px">
-<div class="progress"><div id="namazBar"></div></div>
-<p id="namazPercent" style="text-align:center"></p>
-</div>
-</div>
-
-<div class="card">
-<h2>📊 Previous Days Namaz History</h2>
-<ul id="namazHistory"></ul>
-</div>
-
-<div class="card">
-<button onclick="showQuran()">📖 Quran Verse</button>
-<button onclick="showDua()">🤲 Daily Dua</button>
-<button onclick="iftarRecipe()">🍗 Iftar Recipe</button>
-<button onclick="showQuote()">🕌 Islamic Quote</button>
-<button onclick="addReminder()">⏰ Add Reminder</button>
-<button onclick="showReminder()">📌 Show Reminder</button>
-<button onclick="toggleFont()">🔠 Font Size</button>
-<button onclick="toggleTheme()">🌓 Theme</button>
-<button onclick="resetAll()">♻ Reset Dashboard</button>
-</div>
-
-<div class="footer">Offline • localStorage • ALL IN ONE</div>
-  <button onclick="sendNotification()">🔔 Send Notification</button>
-  <!-- <button></button> -->
-  <a href="calender.html">calender</a>
-</div>
-
-<script>
-   // Notification permission
- if ("Notification" in window) {
-   Notification.requestPermission();
-}
-
-  function sendNotification() {
-   if (Notification.permission === "granted") {
-     new Notification("🌙 Ramadan Reminder", {
-       body: "এটা manual notification 🤲",
-       icon: "https://cdn-icons-png.flaticon.com/512/2949/2949922.png"
-     });
-  } else {
-     alert("Notification permission allow করতে হবে");
-   }
-  }
-
-/* ---------- THEME ---------- */
-function toggleTheme(){
-document.body.classList.toggle("light");
-localStorage.setItem("theme",document.body.className);
-}
-document.body.className=localStorage.getItem("theme")||"";
-
-/* ---------- DATE KEY ---------- */
-function todayKey(){return new Date().toISOString().split("T")[0];}
-
-/* ---------- TIME ---------- */
-let sehriTime="", iftarTime="";
-async function loadTime(){
-const r=await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${district.value}&country=Bangladesh&method=1`);
-const d=await r.json();
-sehriTime=d.data.timings.Fajr;
-iftarTime=d.data.timings.Maghrib;
-sehri.innerText=sehriTime;
-iftar.innerText=iftarTime;
-}
-district.onchange=loadTime; loadTime();
-
-/* ---------- SEHRI COUNTDOWN ---------- */
-setInterval(()=>{
-if(!sehriTime) return;
-const now=new Date();
-let [h,m]=sehriTime.split(":");
-let s=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m);
-let diff=s-now;if(diff<0) diff=0;
-sehriCountdown.innerText=
-Math.floor(diff/3600000)+"h "+
-Math.floor(diff/60000)%60+"m "+
-Math.floor(diff/1000)%60+"s";
-},1000);
-
-/* ---------- IFTAR NOTIFICATION ---------- */
-if("Notification"in window)Notification.requestPermission();
-setInterval(()=>{
-const n=new Date();
-if(iftarTime){
-let[h,m]=iftarTime.split(":");
-if(n.getHours()==h&&n.getMinutes()==m){
-new Notification("🌙 Iftar Time","সময় হয়ে গেছে 🤲");
-}
-}},60000);
-
-/* ---------- HIJRI ---------- */
-fetch("https://api.aladhan.com/v1/gToH")
-.then(r=>r.json())
-.then(d=>hijri.innerText=
-`আজ ${d.data.hijri.day} ${d.data.hijri.month.en} ${d.data.hijri.year} হিজরি`);
-
-/* ---------- RAMADAN DAY ---------- */
-const ramadanStart=new Date("2026-02-18");
-const eidDate=new Date("2026-03-20");
-function updateDay(){
-const t=new Date();
-const r=Math.floor((t-ramadanStart)/86400000)+1;
-ramadanDay.innerText=r>0?`Ramadan Day ${r}`:"Ramadan শুরু হয়নি";
-const e=Math.ceil((eidDate-t)/86400000);
-eid.innerText=e>0?`Eid in ${e} days`:"🌙 Eid Mubarak!";
-}
-updateDay();
-
-/* ---------- RAMADAN CALENDAR ---------- */
-function renderCalendar(){
-calendar.innerHTML="";
-for(let i=0;i<30;i++){
-const d=document.createElement("div");
-d.className="day";
-d.innerText=i+1;
-calendar.appendChild(d);
-}
-}
-renderCalendar();
-
-/* ---------- FOOD ---------- */
-let foods=JSON.parse(localStorage.getItem("foods"))||[];
-function renderFood(){
-foodList.innerHTML="";
-foods.forEach(f=>{
-const li=document.createElement("li");
-li.innerText=f; foodList.appendChild(li);
-});
-localStorage.setItem("foods",JSON.stringify(foods));
-}
-function addFood(){if(foodInput.value){foods.push(foodInput.value);foodInput.value="";renderFood();}}
-function clearFood(){foods=[];renderFood();}
-renderFood();
-
-/* ---------- NAMAZ DATE-WISE ---------- */
-const namazTimes=["Fajr","Dhuhr","Asr","Maghrib","Isha"];
-let namazData=JSON.parse(localStorage.getItem("namazData"))||{};
-if(!namazData[todayKey()]) namazData[todayKey()]=[];
-
-function renderNamaz(){
-namazList.innerHTML="";
-namazTimes.forEach(n=>{
-const li=document.createElement("li");
-li.innerHTML=`${n}
-<input type="checkbox" ${namazData[todayKey()].includes(n)?"checked":""}
-onchange="toggleNamaz('${n}',this)">`;
-namazList.appendChild(li);
-});
-updateProgress();
-renderHistory();
-renderNamazCalendar();
-localStorage.setItem("namazData",JSON.stringify(namazData));
-}
-function toggleNamaz(n,cb){
-if(cb.checked&&!namazData[todayKey()].includes(n))
-namazData[todayKey()].push(n);
-if(!cb.checked)
-namazData[todayKey()]=namazData[todayKey()].filter(x=>x!=n);
-renderNamaz();
-}
-renderNamaz();
-
-/* ---------- PROGRESS ---------- */
-function updateProgress(){
-const p=Math.round((namazData[todayKey()].length/5)*100);
-namazBar.style.width=p+"%";
-namazPercent.innerText=`আজকের নামাজ: ${p}%`;
-}
-
-/* ---------- HISTORY ---------- */
-function renderHistory(){
-namazHistory.innerHTML="";
-Object.keys(namazData).sort().reverse().forEach(d=>{
-const li=document.createElement("li");
-li.innerText=`${d} → ${namazData[d].length}/5 নামাজ`;
-namazHistory.appendChild(li);
-});
-}
-
-/* ---------- CALENDAR MARK ---------- */
-function renderNamazCalendar(){
-document.querySelectorAll(".day").forEach((d,i)=>{
-const date=new Date(ramadanStart);
-date.setDate(date.getDate()+i);
-const key=date.toISOString().split("T")[0];
-if(namazData[key]){
-const c=namazData[key].length;
-d.style.background=c==5?"#16a34a":c>0?"#facc15":"#dc2626";
-}
-});
-}
-
-/* ---------- EXTRAS ---------- */
-function showQuran(){alert("Indeed Allah is with the patient. (2:153)");}
-function showDua(){alert("اللَّهُمَّ إِنِّي لَكَ صُمْتُ");}
-function iftarRecipe(){alert("🍗 Chicken Fry + 🍟 French Fry");}
-function showQuote(){alert("Prayer is the key to Jannah.");}
-function addReminder(){const r=prompt("Reminder লিখুন");if(r)localStorage.setItem("reminder",r);}
-function showReminder(){alert(localStorage.getItem("reminder")||"No reminder");}
-function toggleFont(){
-document.body.style.fontSize=
-document.body.style.fontSize=="18px"?"16px":"18px";
-}
-function resetAll(){
-if(confirm("সব ডাটা মুছে ফেলবেন?")){
-localStorage.clear(); location.reload();
-}}
-</script>
+    <a href="index.html" style="text-decoration: none;"><header>
+        <nav>
+            <h2 class="logo">
+                Islam | Topic
+            </h2>
+        </nav>
+    </header></a>
+    <div class="cards">
+        <div class="card">
+            <a href="ramadan.html">
+                <span>&#9789;</span>
+            <a href="ramadan.html"><h3>RAMADAN</h3></a>
+            </a>
+        </div>
+        <div class="card">
+            <a href="quran.html">
+                <i class="fas fa-book-quran"></i>
+            <a href="quran.html"><h3>Quran</h3></a>
+            </a>
+        </div>
+        <div class="card">
+            <a href="hadith.html">
+                <span>&#xFDFA;</span>
+            <a href="hadith.html"><h3>Hadith</h3></a>
+            </a>
+        </div>
+        <div class="card">
+            <a href="salah.html">
+                <span>&#128331;</span>
+            <a href="salah.html"><h3>Salah</h3></a>
+            </a>
+        </div>
+        <div class="card">
+            <a href="dua.html">
+                <span><i class="fas fa-hands-praying"></i></span>
+            <a href="dua.html"><h3>Dua</h3></a>
+            </a>
+        </div>
+        <div class="card">
+            <a href="salah-time.html">
+                <span>&#x23F0;</span>
+            <a href="salah-time.html"><h3>Salah Time</h3></a>
+            </a>
+        </div>
+    </div>
+    <footer>
+        <span style="margin: 20px;">All right reserved | Made By Samiyyan</span>
+    </footer>
+    <br><br>
 </body>
 </html>
