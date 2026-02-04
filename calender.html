@@ -1,291 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ramadan Calendar 2026</title>
-    <style>
-        :root {
-            --primary-color: #006847; /* Islamic Green */
-            --secondary-color: #d4af37; /* Gold */
-            --bg-color: #f4f7f6;
-            --text-color: #333;
-            --card-bg: #ffffff;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Ramadan Calendar 2026</title>
+
+<style>
+:root{
+  --bg:#020617;
+  --card:#0f172a;
+  --accent:#22c55e;
+  --muted:#94a3b8;
+}
+*{box-sizing:border-box;font-family:system-ui,-apple-system}
+body{
+  margin:0;
+  background:var(--bg);
+  color:white;
+}
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:#020617;
+  padding:14px;
+  text-align:center;
+  border-bottom:1px solid #1e293b;
+}
+header h1{
+  margin:0;
+  font-size:18px;
+}
+.controls{
+  padding:12px;
+  display:grid;
+  gap:10px;
+}
+input,button{
+  padding:12px;
+  font-size:15px;
+  border-radius:10px;
+  border:none;
+}
+input{
+  background:#0f172a;
+  color:white;
+}
+button{
+  background:var(--accent);
+  font-weight:700;
+  color:black;
+}
+.list{
+  padding:12px;
+  display:grid;
+  gap:12px;
+}
+.day{
+  background:var(--card);
+  border-radius:14px;
+  padding:14px;
+}
+.day h3{
+  margin:0 0 8px;
+  font-size:16px;
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  margin:6px 0;
+  font-size:14px;
+}
+.label{color:var(--muted)}
+.footer{
+  text-align:center;
+  padding:16px;
+  font-size:12px;
+  color:var(--muted);
+}
+        /* Header */
+        header{
+            background: linear-gradient(135deg, #06385f9b, #0a022c5b);
+            padding: 15px 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.414);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
+        nav{
+            max-width: 1100px;
+            margin: auto;
             display: flex;
-            flex-direction: column;
             align-items: center;
+            justify-content: space-between;
         }
 
-        h1 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        /* Controls Section */
-        .controls {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 800px;
-        }
-
-        input, select, button {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 16px;
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            cursor: pointer;
+        .logo{
+            font-size: 24px;
             font-weight: bold;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background-color: #004d33;
-        }
-
-        /* Status / Today's Highlight */
-        .status-card {
-            background: linear-gradient(135deg, var(--primary-color), #004d33);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 800px;
-            margin-bottom: 20px;
+            letter-spacing: 1px;
+            color: #facc15;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,104,71,0.3);
-            display: none; /* Hidden until data loads */
         }
 
-        .status-card h2 { margin: 0 0 10px 0; font-size: 1.5rem; }
-        .highlight-times {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 15px;
-            font-size: 1.2rem;
+        /* Responsive */
+        @media (max-width: 600px){
+            .logo{
+                font-size: 20px;
+            }
         }
-        .highlight-box span { display: block; font-size: 0.9rem; opacity: 0.9; }
-        .highlight-box strong { font-size: 1.5rem; color: var(--secondary-color); }
-
-        /* Calendar Table */
-        .calendar-container {
-            width: 100%;
-            max-width: 900px;
-            overflow-x: auto;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
-
-        thead {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #eee;
-        }
-
-        tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        /* Highlight today's row */
-        tr.active-day {
-            background-color: #e8f5e9;
-            border-left: 5px solid var(--secondary-color);
-            font-weight: bold;
-        }
-
-        .loading {
-            text-align: center;
-            font-style: italic;
-            color: #666;
-            margin: 20px;
-            display: none;
-        }
-
-        @media (max-width: 600px) {
-            .controls { flex-direction: column; }
-            .highlight-times { flex-direction: column; gap: 15px; }
-        }
-    </style>
+</style>
 </head>
+
 <body>
 
-    <h1>🌙 Ramadan Calendar</h1>
+<a href="index.html" style="text-decoration: none;"><header>
+        <nav>
+            <h2 class="logo">
+                Islam | Topic
+            </h2>
+        </nav>
+    </header></a>
 
-    <div class="controls">
-        <input type="text" id="city" placeholder="City (e.g. London)" value="Dhaka">
-        <input type="text" id="country" placeholder="Country (e.g. UK)" value="Bangladesh">
-        <select id="method">
-            <option value="2">ISNA (North America)</option>
-            <option value="1">University of Islamic Sciences, Karachi</option>
-            <option value="3">Muslim World League</option>
-            <option value="4">Umm Al-Qura Univ, Makkah</option>
-            <option value="5">Egyptian General Authority</option>
-        </select>
-        <button onclick="fetchRamadanData()">Generate Calendar</button>
-    </div>
+<div class="controls">
+  <input id="city" placeholder="City (e.g. Dhaka)">
+  <input id="country" placeholder="Country (e.g. Bangladesh)">
+  <button onclick="loadRamadan()">Load Ramadan</button>
+</div>
 
-    <div id="loading" class="loading">Fetching Prayer Times...</div>
+<div id="list" class="list"></div>
 
-    <div id="status-card" class="status-card">
-        <h2 id="current-date-display">Today's Times</h2>
-        <div class="highlight-times">
-            <div class="highlight-box">
-                <span>Suhoor Ends (Fajr)</span>
-                <strong id="suhoor-time">--:--</strong>
-            </div>
-            <div class="highlight-box">
-                <span>Iftar (Maghrib)</span>
-                <strong id="iftar-time">--:--</strong>
-            </div>
+<div class="footer">
+  Prayer times by Aladhan API
+</div>
+
+<script>
+async function loadRamadan(){
+  const city = cityInput.value.trim();
+  const country = countryInput.value.trim();
+  if(!city || !country){
+    alert("Enter city & country");
+    return;
+  }
+
+  list.innerHTML = "Loading...";
+
+  const url =
+    `https://api.aladhan.com/v1/hijriCalendarByCity?city=${city}&country=${country}&method=2&month=9&year=1447`;
+
+  try{
+    const res = await fetch(url);
+    const json = await res.json();
+    list.innerHTML = "";
+
+    json.data.forEach((d,i)=>{
+      list.innerHTML += `
+        <div class="day">
+          <h3>Day ${i+1}</h3>
+          <div class="row">
+            <span class="label">Gregorian</span>
+            <span>${d.date.gregorian.date}</span>
+          </div>
+          <div class="row">
+            <span class="label">Hijri</span>
+            <span>${d.date.hijri.date}</span>
+          </div>
+          <div class="row">
+            <span class="label">Sehri (Fajr)</span>
+            <span>${d.timings.Fajr.replace(" (GMT)","")}</span>
+          </div>
+          <div class="row">
+            <span class="label">Iftar (Maghrib)</span>
+            <span>${d.timings.Maghrib.replace(" (GMT)","")}</span>
+          </div>
         </div>
-    </div>
+      `;
+    });
 
-    <div class="calendar-container">
-        <table id="calendar-table">
-            <thead>
-                <tr>
-                    <th>Gregorian Date</th>
-                    <th>Hijri Date</th>
-                    <th>Suhoor (Fajr)</th>
-                    <th>Dhuhr</th>
-                    <th>Asr</th>
-                    <th>Iftar (Maghrib)</th>
-                    <th>Isha</th>
-                </tr>
-            </thead>
-            <tbody id="calendar-body">
-                <tr><td colspan="7" style="text-align:center;">Enter location to see calendar</td></tr>
-            </tbody>
-        </table>
-    </div>
+  }catch{
+    list.innerHTML = "Failed to load data";
+  }
+}
 
-    <script>
-        // Use current date to determine month/year
-        const date = new Date();
-        const currentMonth = date.getMonth() + 1; 
-        const currentYear = date.getFullYear();
+const cityInput = document.getElementById("city");
+const countryInput = document.getElementById("country");
+const list = document.getElementById("list");
+</script>
 
-        async function fetchRamadanData() {
-            const city = document.getElementById('city').value;
-            const country = document.getElementById('country').value;
-            const method = document.getElementById('method').value;
-            const loading = document.getElementById('loading');
-            const tbody = document.getElementById('calendar-body');
-            const statusCard = document.getElementById('status-card');
-
-            if(!city || !country) {
-                alert("Please enter both city and country.");
-                return;
-            }
-
-            loading.style.display = 'block';
-            tbody.innerHTML = '';
-            statusCard.style.display = 'none';
-
-            // Aladhan API Endpoint
-            const apiURL = `https://api.aladhan.com/v1/calendarByCity?city=${city}&country=${country}&method=${method}&month=${currentMonth}&year=${currentYear}`;
-
-            try {
-                const response = await fetch(apiURL);
-                const data = await response.json();
-
-                if (data.code === 200) {
-                    renderCalendar(data.data);
-                } else {
-                    tbody.innerHTML = `<tr><td colspan="7">Error fetching data. Check city/country spelling.</td></tr>`;
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                tbody.innerHTML = `<tr><td colspan="7">Network error. Please try again.</td></tr>`;
-            } finally {
-                loading.style.display = 'none';
-            }
-        }
-
-        function renderCalendar(days) {
-            const tbody = document.getElementById('calendar-body');
-            const statusCard = document.getElementById('status-card');
-            
-            // Get today's date strings for comparison
-            const today = new Date();
-            const todayString = today.getDate().toString().padStart(2, '0') + '-' + (today.getMonth()+1).toString().padStart(2, '0') + '-' + today.getFullYear();
-            
-            let foundToday = false;
-
-            days.forEach(day => {
-                const dateData = day.date;
-                const timings = day.timings;
-                
-                // Clean up time format (remove timezone suffix if present)
-                const cleanTime = (time) => time.split(' ')[0];
-
-                const row = document.createElement('tr');
-                
-                // Check if this row is today
-                if (dateData.gregorian.date === todayString) {
-                    row.classList.add('active-day');
-                    foundToday = true;
-                    
-                    // Update Status Card
-                    statusCard.style.display = 'block';
-                    document.getElementById('current-date-display').innerText = `${dateData.gregorian.weekday.en}, ${dateData.gregorian.date} (${dateData.hijri.month.en} ${dateData.hijri.day})`;
-                    document.getElementById('suhoor-time').innerText = cleanTime(timings.Fajr);
-                    document.getElementById('iftar-time').innerText = cleanTime(timings.Maghrib);
-                }
-
-                row.innerHTML = `
-                    <td>${dateData.gregorian.date} <br><small>${dateData.gregorian.weekday.en}</small></td>
-                    <td>${dateData.hijri.day} ${dateData.hijri.month.en}</td>
-                    <td style="color:var(--primary-color); font-weight:bold;">${cleanTime(timings.Fajr)}</td>
-                    <td>${cleanTime(timings.Dhuhr)}</td>
-                    <td>${cleanTime(timings.Asr)}</td>
-                    <td style="color:var(--primary-color); font-weight:bold;">${cleanTime(timings.Maghrib)}</td>
-                    <td>${cleanTime(timings.Isha)}</td>
-                `;
-                tbody.appendChild(row);
-            });
-            
-            if (!foundToday) {
-                 statusCard.style.display = 'none';
-            }
-        }
-
-        // Trigger default load on open (optional)
-        // fetchRamadanData(); 
-    </script>
 </body>
 </html>
